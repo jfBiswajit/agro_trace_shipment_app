@@ -1,0 +1,123 @@
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+}
+
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+
+
+
+#tab_home .login-form,
+#tab_login .login-form {
+  margin-top: 25px;
+  text-align: left;
+}
+
+#tab_home input[type=text],
+#tab_home input[type=email],
+#tab_login input[type=text],
+#tab_login input[type=email] {
+  background-color: #EBEEF1;
+  border: none;
+  border-bottom: 2px solid #0DB8DE;
+  border-top: 0px;
+  border-radius: 0px;
+  font-weight: bold;
+  outline: 0;
+  margin-bottom: 20px;
+  padding-left: 0px;
+}
+
+#tab_home input[type=password],
+#tab_login input[type=password] {
+  background-color: #EBEEF1;
+  border: none;
+  border-bottom: 2px solid #0DB8DE;
+  border-top: 0px;
+  border-radius: 0px;
+  font-weight: bold;
+  outline: 0;
+  padding-left: 0px;
+  margin-bottom: 20px;
+}
+
+#tab_home .form-group,
+#tab_login .form-group {
+  margin-bottom: 40px;
+  outline: 0px;
+}
+
+#tab_home .form-control:focus,
+#tab_login .form-control:focus {
+  border-color: inherit;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border-bottom: 2px solid #0DB8DE;
+  outline: 0;
+  background-color: #EBEEF1;
+}
+
+#tab_home input:focus,
+#tab_login input:focus {
+  outline: none;
+  box-shadow: 0 0 0;
+}
+
+#tab_home label,
+#tab_login label {
+  margin-bottom: 0px;
+}
+
+#tab_home .form-control-label,
+#tab_login .form-control-label {
+  font-size: 10px;
+  color: #6C6C6C;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+#tab_home .btn-outline-primary,
+#tab_login .btn-outline-primary {
+  border-color: #0DB8DE;
+  color: #0DB8DE;
+  border-radius: 0px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+#tab_home .btn-outline-primary:hover,
+#tab_login .btn-outline-primary:hover {
+  background-color: #0DB8DE;
+  right: 0px;
+}
+
+
+#tab_home .login-button,
+#tab_login .login-button {
+  padding-right: 0px;
+  margin-bottom: 25px;
+}
+
+#tab_home .login-text,
+#tab_login .login-text {
+  text-align: left;
+  padding-left: 0px;
+  color: #A2A4A4;
+}
+
+#tab_home .loginbttm,
+#tab_login .loginbttm {
+  padding: 0px;
+}

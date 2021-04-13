@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.aqualinkbd.agrotech" version="2.3.0" xmlns="http://www.w3.org/ns/widgets" 
+xmlns:android="http://schemas.android.com/apk/res/android" 
+xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>AgroTech</name>
+    <description>
+        An apllication that helps to purchase toabacco.
+    </description>
+    <author email="jfbiswajit@gmail.com" href="https://aqualinkbangladesh.com/">
+        Biswajit Biswas
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <icon src="res/mipmap-xxxhdpi/logo.png" platform="android" width="57" height="57" density="hdpi" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
+          <application android:usesCleartextTraffic="true" />
+        </edit-config>
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+</widget>

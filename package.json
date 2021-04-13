@@ -1,0 +1,42 @@
+{
+  "name": "com.example.hello",
+  "displayName": "HelloWorld",
+  "version": "1.0.0",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Apache Cordova Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "cordova-android": "^9.0.0",
+    "cordova-browser": "^6.0.0",
+    "cordova-plugin-btprinter": "git+https://github.com/CesarBalzer/Cordova-Plugin-BTPrinter.git",
+    "cordova-plugin-camera": "^5.0.1",
+    "cordova-plugin-qrscanner": "^3.0.1",
+    "cordova-plugin-whitelist": "^1.3.4",
+    "platform": "^1.3.6"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-qrscanner": {},
+      "cordova-plugin-x-toast": {},
+      "cordova-plugin-camera": {
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
+      },
+      "cordova-plugin-btprinter": {}
+    },
+    "platforms": [
+      "android",
+      "browser"
+    ]
+  },
+  "dependencies": {
+    "cordova-plugin-x-toast": "^2.7.2"
+  }
+}
