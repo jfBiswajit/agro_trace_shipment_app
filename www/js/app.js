@@ -15,7 +15,8 @@ var app = {
 };
 
 function onDeviceReady() {
-  const server = 'http://hbtobacco.inventory.aqualinkbd.com/api/';
+  // const server = 'http://hbtobacco.inventory.aqualinkbd.com/api/';
+  const server = 'http://127.0.0.1:8000/api/';
   const driverRegBtn = document.querySelector('#driver_registration_btn');
   const loginForm = $('#login_form');
 
@@ -125,6 +126,22 @@ function onDeviceReady() {
       });
     });
   }
+  
+  const getDriverRegTemplate = function (e) {
+    $.ajax({
+      url: server + 'get_driver_reg_template',
+      type: 'GET',
+      
+      error() {
+        showAlert('Sorry!', "Can't connect to server.", 'error', 'tab_login');
+      },
+
+      success(response) {
+        $('#tab_driver_registation').html(response);
+        activeCurrentTab('tab_driver_registation');
+      },
+    });
+  };
 
   const initEvents = function () {
     loginForm.submit(function (e) {
@@ -133,7 +150,7 @@ function onDeviceReady() {
     });
 
     driverRegBtn.addEventListener('click', function (e) {
-      activeCurrentTab('tab_driver_registation');
+      getDriverRegTemplate();
     });
 
     $(document.body).on('click', '#home_btn', function (e) {
@@ -142,7 +159,7 @@ function onDeviceReady() {
     
     document.addEventListener('backbutton', onBackKeyDown, false);
 
-    activeCurrentTab('tab_driver_registation');
+    activeCurrentTab('tab_home');
     initSelectize();
   };
 
