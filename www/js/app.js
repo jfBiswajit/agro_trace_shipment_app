@@ -16,7 +16,7 @@ var app = {
 
 function onDeviceReady() {
   const server = 'http://hbtobacco.inventory.aqualinkbd.com/api/';
-  const regBtn = document.querySelector('#register_btn');
+  const driverRegBtn = document.querySelector('#driver_registration_btn');
   const loginForm = $('#login_form');
 
   const activeCurrentTab = function (tabName) {
@@ -109,6 +109,22 @@ function onDeviceReady() {
       },
     });
   };
+  
+  const testCamera = function() {
+    window.QRScanner.prepare(() => {
+      hideBody();
+      window.QRScanner.show(() => {
+        window.QRScanner.scan((err, text) => {
+          showBody();
+          if (text) {
+            alert(text);
+          }else {
+            alert('Cancled');
+          }
+        });
+      });
+    });
+  }
 
   const initEvents = function () {
     loginForm.submit(function (e) {
@@ -116,10 +132,14 @@ function onDeviceReady() {
       loginAction(e);
     });
 
-    regBtn.addEventListener('click', function (e) {
-      farmerReg(e);
+    driverRegBtn.addEventListener('click', function (e) {
+      activeCurrentTab('tab_driver_registation');
     });
 
+    $(document.body).on('click', '#home_btn', function (e) {
+      activeCurrentTab('tab_home');
+    });
+    
     document.addEventListener('backbutton', onBackKeyDown, false);
 
     activeCurrentTab('tab_home');
