@@ -142,6 +142,29 @@ function onDeviceReady() {
       },
     });
   };
+  
+  const registerDriver = function(e) {
+      e.preventDefault();
+      
+      $.ajax({
+        url: server + 'register_driver',
+        type: 'POST',
+        data: $('#form_driver_reg').serialize(),
+
+        error() {
+          swal('Sorry!', "Can't connect to server.", 'error', 'tab_login');
+        },
+
+        success(response) {
+          if (response.err) {
+            swal('Warning!', 'Driver already exist.', 'warning');
+          } else {
+            swal('Success!', 'Driver successfully registered.', 'success');
+            activeCurrentTab('tab_home');
+          }
+        },
+      });
+    }
 
   const initEvents = function () {
     loginForm.submit(function (e) {
@@ -155,6 +178,10 @@ function onDeviceReady() {
 
     $(document.body).on('click', '#home_btn', function (e) {
       activeCurrentTab('tab_home');
+    });
+    
+    $(document.body).on('submit', '#form_driver_reg', function (e) {
+      registerDriver(e);
     });
     
     document.addEventListener('backbutton', onBackKeyDown, false);
