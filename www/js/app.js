@@ -142,7 +142,7 @@ function onDeviceReady() {
     
     document.addEventListener('backbutton', onBackKeyDown, false);
 
-    activeCurrentTab('tab_home');
+    activeCurrentTab('tab_driver_registation');
     initSelectize();
   };
 
