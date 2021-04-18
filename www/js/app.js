@@ -230,7 +230,7 @@ function onDeviceReady() {
   
   const goToLoadBalePage = function(e) {
     e.preventDefault();
-    alert(10);
+    activeCurrentTab('tab_scan_and_load');
   }
 
   const initEvents = function () {
@@ -270,7 +270,7 @@ function onDeviceReady() {
 
     document.addEventListener('backbutton', onBackKeyDown, false);
 
-    activeCurrentTab('tab_scan_and_load');
+    activeCurrentTab('tab_home');
     initSelectize();
   };
 
