@@ -16,10 +16,11 @@ var app = {
 
 function onDeviceReady() {
   // const server = 'http://hbtobacco.inventory.aqualinkbd.com/api/';
-  const server = 'http://127.0.0.1:8000/api/';
+  const server = 'http://192.168.0.119:80/api/';
   const driverRegBtn = document.querySelector('#driver_registration_btn');
   const vehicleRegBtn = document.querySelector('#vehicle_registration_btn');
   const getLoadBaleTemplateBtn = document.querySelector('#get_load_bale_template_btn');
+  const loadDoneBtn = document.querySelector('#load_done_btn');
   const loginForm = $('#login_form');
 
   const activeCurrentTab = function (tabName) {
@@ -95,7 +96,7 @@ function onDeviceReady() {
       data: $('#login_form').serialize(),
 
       error() {
-        showAlert('Sorry!', "Can't connect to server.", 'error', 'tab_login');
+        swal('Sorry!', "Can't connect to server.", 'error');
       },
 
       success(response) {
@@ -135,7 +136,7 @@ function onDeviceReady() {
       type: 'GET',
 
       error() {
-        showAlert('Sorry!', "Can't connect to server.", 'error', 'tab_login');
+        swal('Sorry!', "Can't connect to server.", 'error');
       },
 
       success(response) {
@@ -151,7 +152,7 @@ function onDeviceReady() {
       type: 'GET',
 
       error() {
-        showAlert('Sorry!', "Can't connect to server.", 'error', 'tab_login');
+        swal('Sorry!', "Can't connect to server.", 'error');
       },
 
       success(response) {
@@ -168,7 +169,7 @@ function onDeviceReady() {
       type: 'GET',
 
       error() {
-        showAlert('Sorry!', "Can't connect to server.", 'error', 'tab_login');
+        swal('Sorry!', "Can't connect to server.", 'error');
       },
 
       success(response) {
@@ -249,6 +250,10 @@ function onDeviceReady() {
     
     getLoadBaleTemplateBtn.addEventListener('click', function (e) {
       getLoadBaleTemplate();
+    });
+    
+    loadDoneBtn.addEventListener('click', function (e) {
+      activeCurrentTab('tab_home');
     });
 
     $(document.body).on('submit', '#form_driver_reg', function (e) {
