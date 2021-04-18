@@ -18,6 +18,7 @@ function onDeviceReady() {
   // const server = 'http://hbtobacco.inventory.aqualinkbd.com/api/';
   const server = 'http://127.0.0.1:8000/api/';
   const driverRegBtn = document.querySelector('#driver_registration_btn');
+  const vehicleRegBtn = document.querySelector('#vehicle_registration_btn');
   const loginForm = $('#login_form');
 
   const activeCurrentTab = function (tabName) {
@@ -110,8 +111,8 @@ function onDeviceReady() {
       },
     });
   };
-  
-  const testCamera = function() {
+
+  const testCamera = function () {
     window.QRScanner.prepare(() => {
       hideBody();
       window.QRScanner.show(() => {
@@ -119,19 +120,19 @@ function onDeviceReady() {
           showBody();
           if (text) {
             alert(text);
-          }else {
+          } else {
             alert('Cancled');
           }
         });
       });
     });
-  }
-  
+  };
+
   const getDriverRegTemplate = function (e) {
     $.ajax({
       url: server + 'get_driver_reg_template',
       type: 'GET',
-      
+
       error() {
         showAlert('Sorry!', "Can't connect to server.", 'error', 'tab_login');
       },
@@ -142,29 +143,72 @@ function onDeviceReady() {
       },
     });
   };
+
+  const getVehicleRegTemplate = function (e) {
+    $.ajax({
+      url: server + 'get_vehicle_reg_template',
+      type: 'GET',
+
+      error() {
+        showAlert('Sorry!', "Can't connect to server.", 'error', 'tab_login');
+      },
+
+      success(response) {
+        $('#tab_vehicle_registation').html(response);
+        activeCurrentTab('tab_vehicle_registation');
+      },
+    });
+  };
+
+  const registerDriver = function (e) {
+    e.preventDefault();
+
+    $.ajax({
+      url: server + 'register_driver',
+      type: 'POST',
+      data: $('#form_driver_reg').serialize(),
+
+      error() {
+        swal('Sorry!', "Can't connect to server.", 'error');
+      },
+
+      success(response) {
+        if (response.err) {
+          swal('Warning!', 'Driver already exist.', 'warning');
+        } else {
+          swal('Success!', 'Driver successfully registered.', 'success');
+          activeCurrentTab('tab_home');
+        }
+      },
+    });
+  };
   
-  const registerDriver = function(e) {
-      e.preventDefault();
-      
-      $.ajax({
-        url: server + 'register_driver',
-        type: 'POST',
-        data: $('#form_driver_reg').serialize(),
+  
+  const registerVehicle = function (e) {
+    e.preventDefault();
 
-        error() {
-          swal('Sorry!', "Can't connect to server.", 'error', 'tab_login');
-        },
+    $.ajax({
+      headers: {
+        Accept: 'application/json',
+      },
+      url: server + 'register_vehicle',
+      type: 'POST',
+      data: $('#form_vehicle_reg').serialize(),
 
-        success(response) {
-          if (response.err) {
-            swal('Warning!', 'Driver already exist.', 'warning');
-          } else {
-            swal('Success!', 'Driver successfully registered.', 'success');
-            activeCurrentTab('tab_home');
-          }
-        },
-      });
-    }
+      error(response) {
+        if (response.responseJSON.message) {
+          swal('Warning!', response.responseJSON.message, 'warning');
+        } else {
+          swal('Sorry!', "Can't connect to server.", 'error');
+        }
+      },
+
+      success(response) {
+        swal('Success!', 'Vehicle successfully registered.', 'success');
+        activeCurrentTab('tab_home');
+      },
+    });
+  };
 
   const initEvents = function () {
     loginForm.submit(function (e) {
@@ -176,14 +220,23 @@ function onDeviceReady() {
       getDriverRegTemplate();
     });
 
-    $(document.body).on('click', '#home_btn', function (e) {
-      activeCurrentTab('tab_home');
+    vehicleRegBtn.addEventListener('click', function (e) {
+      getVehicleRegTemplate();
     });
-    
+
     $(document.body).on('submit', '#form_driver_reg', function (e) {
       registerDriver(e);
     });
     
+    $(document.body).on('submit', '#form_vehicle_reg', function (e) {
+      registerVehicle(e);
+    });
+
+    // Common events
+    $(document.body).on('click', '#home_btn', function (e) {
+      activeCurrentTab('tab_home');
+    });
+
     document.addEventListener('backbutton', onBackKeyDown, false);
 
     activeCurrentTab('tab_home');
