@@ -19,6 +19,7 @@ function onDeviceReady() {
   const server = 'http://127.0.0.1:8000/api/';
   const driverRegBtn = document.querySelector('#driver_registration_btn');
   const vehicleRegBtn = document.querySelector('#vehicle_registration_btn');
+  const getLoadBaleTemplateBtn = document.querySelector('#get_load_bale_template_btn');
   const loginForm = $('#login_form');
 
   const activeCurrentTab = function (tabName) {
@@ -159,6 +160,23 @@ function onDeviceReady() {
       },
     });
   };
+  
+  
+  const getLoadBaleTemplate = function (e) {
+    $.ajax({
+      url: server + 'get_load_bale_template',
+      type: 'GET',
+
+      error() {
+        showAlert('Sorry!', "Can't connect to server.", 'error', 'tab_login');
+      },
+
+      success(response) {
+        $('#tab_generate_operation').html(response);
+        activeCurrentTab('tab_generate_operation');
+      },
+    });
+  };
 
   const registerDriver = function (e) {
     e.preventDefault();
@@ -209,6 +227,11 @@ function onDeviceReady() {
       },
     });
   };
+  
+  const goToLoadBalePage = function(e) {
+    e.preventDefault();
+    alert(10);
+  }
 
   const initEvents = function () {
     loginForm.submit(function (e) {
@@ -223,9 +246,17 @@ function onDeviceReady() {
     vehicleRegBtn.addEventListener('click', function (e) {
       getVehicleRegTemplate();
     });
+    
+    getLoadBaleTemplateBtn.addEventListener('click', function (e) {
+      getLoadBaleTemplate();
+    });
 
     $(document.body).on('submit', '#form_driver_reg', function (e) {
       registerDriver(e);
+    });
+    
+    $(document.body).on('submit', '#form_go_to_new_operation', function (e) {
+      goToLoadBalePage(e);
     });
     
     $(document.body).on('submit', '#form_vehicle_reg', function (e) {
@@ -239,7 +270,7 @@ function onDeviceReady() {
 
     document.addEventListener('backbutton', onBackKeyDown, false);
 
-    activeCurrentTab('tab_home');
+    activeCurrentTab('tab_scan_and_load');
     initSelectize();
   };
 
