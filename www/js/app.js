@@ -21,6 +21,7 @@ function onDeviceReady() {
   const vehicleRegBtn = document.querySelector('#vehicle_registration_btn');
   const getLoadBaleTemplateBtn = document.querySelector('#get_load_bale_template_btn');
   const loadDoneBtn = document.querySelector('#load_done_btn');
+  const scanToLoadBtn = document.querySelector('#scan_to_load_btn');
   const loginForm = $('#login_form');
 
   const activeCurrentTab = function (tabName) {
@@ -111,22 +112,6 @@ function onDeviceReady() {
           swal('Unauthorized!', "Your credentials don't match.", 'error');
         }
       },
-    });
-  };
-
-  const testCamera = function () {
-    window.QRScanner.prepare(() => {
-      hideBody();
-      window.QRScanner.show(() => {
-        window.QRScanner.scan((err, text) => {
-          showBody();
-          if (text) {
-            alert(text);
-          } else {
-            alert('Cancled');
-          }
-        });
-      });
     });
   };
 
@@ -233,6 +218,43 @@ function onDeviceReady() {
     e.preventDefault();
     activeCurrentTab('tab_scan_and_load');
   }
+  
+    const scanToLoadBale = function () {
+      window.QRScanner.prepare(() => {
+        hideBody();
+        window.QRScanner.show(() => {
+          window.QRScanner.scan((err, text) => {
+            showBody();
+            if (text) {
+              $.ajax({
+                url: server + 'load_bale',
+                type: 'POST',
+                dataType: 'json', 
+                data: {
+                  tracking_id: $('#tracking_id').val(),
+                  bale_id: text,
+                  driver_id: $('#driver_id').val(),
+                  vehicle_id: $('#vehicle_id').val(),
+                  from_warehouse: $('#from_warehouse').val(),
+                  to_warehouse: $('#to_warehouse').val(),
+                },
+
+                error() {
+                  swal('Sorry!', "Can't connect to server.", 'error');
+                },
+
+                success(response) {
+                  if (response.isSuccess) {
+                    $('#tracking_id').val(response.trackingId);
+                    $('#show_tracking_id').html(`Load Bale: ${response.trackingId}`);
+                  }
+                },
+              });
+            }
+          });
+        });
+      });
+    };
 
   const initEvents = function () {
     loginForm.submit(function (e) {
@@ -254,6 +276,10 @@ function onDeviceReady() {
     
     loadDoneBtn.addEventListener('click', function (e) {
       activeCurrentTab('tab_home');
+    });
+    
+    scanToLoadBtn.addEventListener('click', function (e) {
+      scanToLoadBale();
     });
 
     $(document.body).on('submit', '#form_driver_reg', function (e) {
