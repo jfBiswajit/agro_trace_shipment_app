@@ -16,12 +16,14 @@ var app = {
 
 function onDeviceReady() {
   // const server = 'http://hbtobacco.inventory.aqualinkbd.com/api/';
-  const server = 'http://192.168.0.110:80/api/';
+  const server = 'http://192.168.0.117:80/api/';
   const driverRegBtn = document.querySelector('#driver_registration_btn');
   const vehicleRegBtn = document.querySelector('#vehicle_registration_btn');
   const getLoadBaleTemplateBtn = document.querySelector('#get_load_bale_template_btn');
   const loadDoneBtn = document.querySelector('#load_done_btn');
+  const unLoadDoneBtn = document.querySelector('#unload_done_btn');
   const scanToLoadBtn = document.querySelector('#scan_to_load_btn');
+  const scanShipmentVoucharBtn = document.querySelector('#scan_shipment_vouchar');
   const scanToRemoveBtn = document.querySelector('#scan_to_delete_btn');
   const loginForm = $('#login_form');
 
@@ -287,6 +289,44 @@ function onDeviceReady() {
       });
     };
     
+    
+    const scanShipmentVouchar = function () {
+      window.QRScanner.prepare(() => {
+        hideBody();
+        window.QRScanner.show(() => {
+          window.QRScanner.scan((err, text) => {
+            showBody();
+            if (text) {
+              $.ajax({
+                url: server + 'unload_bale',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  tracking_id: text,
+                  is_only_tracking_id: true,
+                },
+
+                error() {
+                  swal('Sorry!', "Can't connect to server.", 'error');
+                },
+
+                success(response) {
+                  if (response.isSuccess) {
+                    $('#show_unload_tracking_id').html(`Unload Bale: ${response.trackingId}`);
+                    $('#unloaded_bale_list').html(response.existingData);
+                    $('#vouchar_tracking_id').val(response.trackingId);
+                    activeCurrentTab('tab_scan_and_unload');
+                  } else {
+                    swal('Warning!', response.msg, 'warning');
+                  }
+                },
+              });
+            }
+          });
+        });
+      });
+    };
+    
     const scanToRemove = function () {
       window.QRScanner.prepare(() => {
         hideBody();
@@ -353,12 +393,20 @@ function onDeviceReady() {
       activeCurrentTab('tab_home');
     });
     
+    unLoadDoneBtn.addEventListener('click', function (e) {
+      activeCurrentTab('tab_home');
+    });
+    
     scanToRemoveBtn.addEventListener('click', function (e) {
       scanToRemove();
     });
     
     scanToLoadBtn.addEventListener('click', function (e) {
       scanToLoadBale();
+    });
+    
+    scanShipmentVoucharBtn.addEventListener('click', function (e) {
+      scanShipmentVouchar();
     });
 
     $(document.body).on('submit', '#form_driver_reg', function (e) {
