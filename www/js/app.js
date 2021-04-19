@@ -52,6 +52,13 @@ function onDeviceReady() {
 
     $('.set_default_date').val(new Date().toDateInputValue());
   };
+  
+    const deleteRow = function (tblID, VALUE) {
+      $('#' + tblID)
+        .find(`td:contains(${VALUE})`)
+        .closest('tr')
+        .remove();
+    };
 
   const showBody = function () {
     document.querySelector('body').setAttribute('style', 'display: block');
@@ -280,14 +287,15 @@ function onDeviceReady() {
       });
     };
     
-    const scanToRemoveBtn = function () {
+    const scanToRemove = function () {
       window.QRScanner.prepare(() => {
         hideBody();
         window.QRScanner.show(() => {
           window.QRScanner.scan((err, text) => {
             showBody();
             if (text) {
-              $.ajax({
+              if (confirm('Are you sure want to remove?')) {
+                $.ajax({
                 url: server + 'remove_loaded_bale',
                 type: 'POST',
                 dataType: 'json',
@@ -306,15 +314,17 @@ function onDeviceReady() {
                       `${response.msg}`,
                       'success'
                     );
+                    deleteRow('loaded_bale_list', text);
                   } else {
                     swal(
                       'Warning',
                       `${response.msg}`,
-                      'success'
+                      'warning'
                     );
                   }
                 },
               });
+              }
             }
           });
         });
@@ -344,7 +354,7 @@ function onDeviceReady() {
     });
     
     scanToRemoveBtn.addEventListener('click', function (e) {
-      scanToRemoveBtn();
+      scanToRemove();
     });
     
     scanToLoadBtn.addEventListener('click', function (e) {
