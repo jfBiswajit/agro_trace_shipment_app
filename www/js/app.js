@@ -22,6 +22,7 @@ function onDeviceReady() {
   const getLoadBaleTemplateBtn = document.querySelector('#get_load_bale_template_btn');
   const loadDoneBtn = document.querySelector('#load_done_btn');
   const scanToLoadBtn = document.querySelector('#scan_to_load_btn');
+  const scanToRemoveBtn = document.querySelector('#scan_to_delete_btn');
   const loginForm = $('#login_form');
 
   const activeCurrentTab = function (tabName) {
@@ -278,6 +279,47 @@ function onDeviceReady() {
         });
       });
     };
+    
+    const scanToRemoveBtn = function () {
+      window.QRScanner.prepare(() => {
+        hideBody();
+        window.QRScanner.show(() => {
+          window.QRScanner.scan((err, text) => {
+            showBody();
+            if (text) {
+              $.ajax({
+                url: server + 'remove_loaded_bale',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  bale_id: text,
+                },
+
+                error() {
+                  swal('Sorry!', "Can't connect to server.", 'error');
+                },
+
+                success(response) {
+                  if (response.isSuccess) {
+                    swal(
+                      'Success',
+                      `${response.msg}`,
+                      'success'
+                    );
+                  } else {
+                    swal(
+                      'Warning',
+                      `${response.msg}`,
+                      'success'
+                    );
+                  }
+                },
+              });
+            }
+          });
+        });
+      });
+    }
 
   const initEvents = function () {
     loginForm.submit(function (e) {
@@ -299,6 +341,10 @@ function onDeviceReady() {
     
     loadDoneBtn.addEventListener('click', function (e) {
       activeCurrentTab('tab_home');
+    });
+    
+    scanToRemoveBtn.addEventListener('click', function (e) {
+      scanToRemoveBtn();
     });
     
     scanToLoadBtn.addEventListener('click', function (e) {
