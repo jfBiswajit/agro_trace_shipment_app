@@ -217,6 +217,8 @@ function onDeviceReady() {
   const goToLoadBalePage = function(e) {
     e.preventDefault();
     activeCurrentTab('tab_scan_and_load');
+    $('#show_tracking_id').html(`Load Bale`);
+    $('#loaded_bale_list').html('');
   }
   
   const addTrackingIdAndExistingData = function(response) {
