@@ -16,7 +16,7 @@ var app = {
 
 function onDeviceReady() {
   // const server = 'http://hbtobacco.inventory.aqualinkbd.com/api/';
-  const server = 'http://192.168.0.119:80/api/';
+  const server = 'http://192.168.0.110:80/api/';
   const driverRegBtn = document.querySelector('#driver_registration_btn');
   const vehicleRegBtn = document.querySelector('#vehicle_registration_btn');
   const getLoadBaleTemplateBtn = document.querySelector('#get_load_bale_template_btn');
@@ -219,6 +219,12 @@ function onDeviceReady() {
     activeCurrentTab('tab_scan_and_load');
   }
   
+  const addTrackingIdAndExistingData = function(response) {
+    $('#tracking_id').val(response.trackingId);
+    $('#show_tracking_id').html(`Load Bale: ${response.trackingId}`);
+    $('#loaded_bale_list').html(response.existingData);
+  }
+  
     const scanToLoadBale = function () {
       window.QRScanner.prepare(() => {
         hideBody();
@@ -245,8 +251,23 @@ function onDeviceReady() {
 
                 success(response) {
                   if (response.isSuccess) {
-                    $('#tracking_id').val(response.trackingId);
-                    $('#show_tracking_id').html(`Load Bale: ${response.trackingId}`);
+                    if (response.isBaleExists) {
+                       swal({
+                         title: 'Exists!',
+                         text: 'Do you want to go existing operation?',
+                         icon: 'warning',
+                         buttons: true,
+                         dangerMode: true,
+                       }).then((wantToGoExistingOperation) => {
+                         if (wantToGoExistingOperation) {
+                           addTrackingIdAndExistingData(response);
+                         }
+                       });
+                    } else {
+                      addTrackingIdAndExistingData(response);
+                    }
+                  } else {
+                    swal('Warning!', response.msg, 'warning');
                   }
                 },
               });
