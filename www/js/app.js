@@ -16,14 +16,19 @@ var app = {
 
 function onDeviceReady() {
   // const server = 'http://hbtobacco.inventory.aqualinkbd.com/api/';
-  const server = 'http://192.168.0.117:80/api/';
+  const server = 'http://192.168.0.119:80/api/';
   const driverRegBtn = document.querySelector('#driver_registration_btn');
   const vehicleRegBtn = document.querySelector('#vehicle_registration_btn');
-  const getLoadBaleTemplateBtn = document.querySelector('#get_load_bale_template_btn');
+  const getLoadBaleTemplateBtn = document.querySelector(
+    '#get_load_bale_template_btn'
+  );
   const loadDoneBtn = document.querySelector('#load_done_btn');
   const unLoadDoneBtn = document.querySelector('#unload_done_btn');
   const scanToLoadBtn = document.querySelector('#scan_to_load_btn');
-  const scanShipmentVoucharBtn = document.querySelector('#scan_shipment_vouchar');
+  const scanToUnloadBtn = document.querySelector('#scan_to_unload_bale_btn');
+  const scanShipmentVoucharBtn = document.querySelector(
+    '#scan_shipment_vouchar'
+  );
   const scanToRemoveBtn = document.querySelector('#scan_to_delete_btn');
   const loginForm = $('#login_form');
 
@@ -54,13 +59,13 @@ function onDeviceReady() {
 
     $('.set_default_date').val(new Date().toDateInputValue());
   };
-  
-    const deleteRow = function (tblID, VALUE) {
-      $('#' + tblID)
-        .find(`td:contains(${VALUE})`)
-        .closest('tr')
-        .remove();
-    };
+
+  const deleteRow = function (tblID, VALUE) {
+    $('#' + tblID)
+      .find(`td:contains(${VALUE})`)
+      .closest('tr')
+      .remove();
+  };
 
   const showBody = function () {
     document.querySelector('body').setAttribute('style', 'display: block');
@@ -156,8 +161,7 @@ function onDeviceReady() {
       },
     });
   };
-  
-  
+
   const getLoadBaleTemplate = function (e) {
     $.ajax({
       url: server + 'get_load_bale_template',
@@ -196,8 +200,7 @@ function onDeviceReady() {
       },
     });
   };
-  
-  
+
   const registerVehicle = function (e) {
     e.preventDefault();
 
@@ -223,119 +226,188 @@ function onDeviceReady() {
       },
     });
   };
-  
-  const goToLoadBalePage = function(e) {
+
+  const goToLoadBalePage = function (e) {
     e.preventDefault();
     activeCurrentTab('tab_scan_and_load');
     $('#show_tracking_id').html(`Load Bale`);
     $('#loaded_bale_list').html('');
-  }
-  
-  const addTrackingIdAndExistingData = function(response) {
+  };
+
+  const addTrackingIdAndExistingData = function (response) {
     $('#tracking_id').val(response.trackingId);
     $('#show_tracking_id').html(`Load Bale: ${response.trackingId}`);
     $('#loaded_bale_list').html(response.existingData);
-  }
-  
-    const scanToLoadBale = function () {
-      window.QRScanner.prepare(() => {
-        hideBody();
-        window.QRScanner.show(() => {
-          window.QRScanner.scan((err, text) => {
-            showBody();
-            if (text) {
-              $.ajax({
-                url: server + 'load_bale',
-                type: 'POST',
-                dataType: 'json', 
-                data: {
-                  tracking_id: $('#tracking_id').val(),
-                  bale_id: text,
-                  driver_id: $('#driver_id').val(),
-                  vehicle_id: $('#vehicle_id').val(),
-                  from_warehouse: $('#from_warehouse').val(),
-                  to_warehouse: $('#to_warehouse').val(),
-                },
+  };
 
-                error() {
-                  swal('Sorry!', "Can't connect to server.", 'error');
-                },
+  const scanToLoadBale = function () {
+    window.QRScanner.prepare(() => {
+      hideBody();
+      window.QRScanner.show(() => {
+        window.QRScanner.scan((err, text) => {
+          showBody();
+          if (text) {
+            $.ajax({
+              url: server + 'load_bale',
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                tracking_id: $('#tracking_id').val(),
+                bale_id: text,
+                driver_id: $('#driver_id').val(),
+                vehicle_id: $('#vehicle_id').val(),
+                from_warehouse: $('#from_warehouse').val(),
+                to_warehouse: $('#to_warehouse').val(),
+              },
 
-                success(response) {
-                  if (response.isSuccess) {
-                    if (response.isBaleExists) {
-                       swal({
-                         title: 'Exists!',
-                         text: 'Do you want to go existing operation?',
-                         icon: 'warning',
-                         buttons: true,
-                         dangerMode: true,
-                       }).then((wantToGoExistingOperation) => {
-                         if (wantToGoExistingOperation) {
-                           addTrackingIdAndExistingData(response);
-                         }
-                       });
-                    } else {
-                      addTrackingIdAndExistingData(response);
-                    }
+              error() {
+                swal('Sorry!', "Can't connect to server.", 'error');
+              },
+
+              success(response) {
+                if (response.isSuccess) {
+                  if (response.isBaleExists) {
+                    swal({
+                      title: 'Exists!',
+                      text: 'Do you want to go existing operation?',
+                      icon: 'warning',
+                      buttons: true,
+                      dangerMode: true,
+                    }).then((wantToGoExistingOperation) => {
+                      if (wantToGoExistingOperation) {
+                        addTrackingIdAndExistingData(response);
+                      }
+                    });
+                  } else {
+                    addTrackingIdAndExistingData(response);
+                  }
+                } else {
+                  swal('Warning!', response.msg, 'warning');
+                }
+              },
+            });
+          }
+        });
+      });
+    });
+  };
+
+  const scanToUnload = function () {
+    window.QRScanner.prepare(() => {
+      hideBody();
+      window.QRScanner.show(() => {
+        window.QRScanner.scan((err, text) => {
+          showBody();
+          if (text) {
+            $.ajax({
+              url: server + 'unload_bale',
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                tracking_id: $('#vouchar_tracking_id').val(),
+                bale_id: text,
+              },
+
+              error() {
+                swal('Sorry!', "Can't connect to server.", 'error');
+              },
+
+              success(response) {
+                if (response.isSuccess) {
+                  swal('Success', response.msg, 'success');
+                  $('#unloaded_bale_list').html(response.existingData);
+                } else {
+                  if (response.isBaleMissing) {
+                    swal({
+                      title: 'Missing Bale!',
+                      text: response.msg,
+                      icon: 'warning',
+                      buttons: true,
+                      dangerMode: true,
+                    }).then((wantToAddMissingBale) => {
+                      if (wantToAddMissingBale) {
+                        $.ajax({
+                          type: 'POST',
+                          url: server + 'load_bale',
+                          dataType: 'json',
+                          data: {
+                            bale_id: text,
+                            tracking_id: $('#vouchar_tracking_id').val(),
+                            is_missing_bale: true,
+                          },
+
+                          error() {
+                            swal('Sorry!', "Can't connect to server.", 'error');
+                          },
+
+                          success(response) {
+                            swal('Success', `${response.msg}`, 'success');
+                            $('#unloaded_bale_list').html(
+                              response.existingData
+                            );
+                          },
+                        });
+                      }
+                    });
                   } else {
                     swal('Warning!', response.msg, 'warning');
                   }
-                },
-              });
-            }
-          });
+                }
+              },
+            });
+          }
         });
       });
-    };
-    
-    
-    const scanShipmentVouchar = function () {
-      window.QRScanner.prepare(() => {
-        hideBody();
-        window.QRScanner.show(() => {
-          window.QRScanner.scan((err, text) => {
-            showBody();
-            if (text) {
+    });
+  };
+
+  const scanShipmentVouchar = function () {
+    window.QRScanner.prepare(() => {
+      hideBody();
+      window.QRScanner.show(() => {
+        window.QRScanner.scan((err, text) => {
+          showBody();
+          if (text) {
+            $.ajax({
+              url: server + 'unload_bale',
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                tracking_id: text,
+              },
+
+              error() {
+                swal('Sorry!', "Can't connect to server.", 'error');
+              },
+
+              success(response) {
+                if (response.isSuccess) {
+                  $('#show_unload_tracking_id').html(
+                    `Unload Bale: ${response.trackingId}`
+                  );
+                  $('#unloaded_bale_list').html(response.existingData);
+                  $('#vouchar_tracking_id').val(response.trackingId);
+                  activeCurrentTab('tab_scan_and_unload');
+                } else {
+                  swal('Warning!', response.msg, 'warning');
+                }
+              },
+            });
+          }
+        });
+      });
+    });
+  };
+
+  const scanToRemove = function () {
+    window.QRScanner.prepare(() => {
+      hideBody();
+      window.QRScanner.show(() => {
+        window.QRScanner.scan((err, text) => {
+          showBody();
+          if (text) {
+            if (confirm('Are you sure want to remove?')) {
               $.ajax({
-                url: server + 'unload_bale',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                  tracking_id: text,
-                  is_only_tracking_id: true,
-                },
-
-                error() {
-                  swal('Sorry!', "Can't connect to server.", 'error');
-                },
-
-                success(response) {
-                  if (response.isSuccess) {
-                    $('#show_unload_tracking_id').html(`Unload Bale: ${response.trackingId}`);
-                    $('#unloaded_bale_list').html(response.existingData);
-                    $('#vouchar_tracking_id').val(response.trackingId);
-                    activeCurrentTab('tab_scan_and_unload');
-                  } else {
-                    swal('Warning!', response.msg, 'warning');
-                  }
-                },
-              });
-            }
-          });
-        });
-      });
-    };
-    
-    const scanToRemove = function () {
-      window.QRScanner.prepare(() => {
-        hideBody();
-        window.QRScanner.show(() => {
-          window.QRScanner.scan((err, text) => {
-            showBody();
-            if (text) {
-              if (confirm('Are you sure want to remove?')) {
-                $.ajax({
                 url: server + 'remove_loaded_bale',
                 type: 'POST',
                 dataType: 'json',
@@ -349,27 +421,19 @@ function onDeviceReady() {
 
                 success(response) {
                   if (response.isSuccess) {
-                    swal(
-                      'Success',
-                      `${response.msg}`,
-                      'success'
-                    );
+                    swal('Success', `${response.msg}`, 'success');
                     deleteRow('loaded_bale_list', text);
                   } else {
-                    swal(
-                      'Warning',
-                      `${response.msg}`,
-                      'warning'
-                    );
+                    swal('Warning', `${response.msg}`, 'warning');
                   }
                 },
               });
-              }
             }
-          });
+          }
         });
       });
-    }
+    });
+  };
 
   const initEvents = function () {
     loginForm.submit(function (e) {
@@ -384,27 +448,31 @@ function onDeviceReady() {
     vehicleRegBtn.addEventListener('click', function (e) {
       getVehicleRegTemplate();
     });
-    
+
     getLoadBaleTemplateBtn.addEventListener('click', function (e) {
       getLoadBaleTemplate();
     });
-    
+
     loadDoneBtn.addEventListener('click', function (e) {
       activeCurrentTab('tab_home');
     });
-    
+
     unLoadDoneBtn.addEventListener('click', function (e) {
       activeCurrentTab('tab_home');
     });
-    
+
     scanToRemoveBtn.addEventListener('click', function (e) {
       scanToRemove();
     });
-    
+
     scanToLoadBtn.addEventListener('click', function (e) {
       scanToLoadBale();
     });
-    
+
+    scanToUnloadBtn.addEventListener('click', function (e) {
+      scanToUnload();
+    });
+
     scanShipmentVoucharBtn.addEventListener('click', function (e) {
       scanShipmentVouchar();
     });
@@ -412,11 +480,11 @@ function onDeviceReady() {
     $(document.body).on('submit', '#form_driver_reg', function (e) {
       registerDriver(e);
     });
-    
+
     $(document.body).on('submit', '#form_go_to_new_operation', function (e) {
       goToLoadBalePage(e);
     });
-    
+
     $(document.body).on('submit', '#form_vehicle_reg', function (e) {
       registerVehicle(e);
     });
